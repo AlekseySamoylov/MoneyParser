@@ -24,7 +24,7 @@ public class JsonToCsvParser {
 
       // Create CSV file and write header
       FileWriter csvWriter = new FileWriter(csvFilePath);
-      csvWriter.append("payload.type,payload.brand.name,payload.amount.value,payload.spendingCategory.name,payload.merchant.name,payload.debitingTime.milliseconds\n");
+      csvWriter.append("date,value,brand,category,type\n");
 
       // Process each transaction in the payload
       for (JsonNode transaction : payloadNode) {
@@ -33,21 +33,19 @@ public class JsonToCsvParser {
         String brandName = getNestedValueAsString(transaction, "brand", "name");
         String amountValue = getNestedValueAsString(transaction, "amount", "value");
         String spendingCategoryName = getNestedValueAsString(transaction, "spendingCategory", "name");
-        String merchantName = getNestedValueAsString(transaction, "merchant", "name");
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        long debitingTimeLong = getNestedValueAsLong(transaction, "debitingTime", "milliseconds");
+        long debitingTimeLong = getNestedValueAsLong(transaction, "operationTime", "milliseconds");
         String debitingTime = dateFormat.format(new Date(debitingTimeLong));
 
         // Write to CSV
         csvWriter.append(String.join(",",
-            escapeCsv(type),
-            escapeCsv(brandName),
+            escapeCsv(debitingTime),
             escapeCsv(amountValue),
+            escapeCsv(brandName),
             escapeCsv(spendingCategoryName),
-            escapeCsv(merchantName),
-            escapeCsv(debitingTime)
-        ));
+            escapeCsv(type)
+            ));
         csvWriter.append("\n");
       }
 
