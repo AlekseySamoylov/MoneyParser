@@ -33,6 +33,8 @@ public class JsonToCsvParser {
         String brandName = getNestedValueAsString(transaction, "brand", "name");
         String amountValue = getNestedValueAsString(transaction, "amount", "value");
         String spendingCategoryName = getNestedValueAsString(transaction, "spendingCategory", "name");
+        String receiver = getNestedValueAsString(transaction,"fieldsValues", "maskedFIO");
+        String receiverBank = getNestedValueAsString(transaction,"fieldsValues", "receiverBankName");
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         long debitingTimeLong = getNestedValueAsLong(transaction, "operationTime", "milliseconds");
@@ -42,7 +44,7 @@ public class JsonToCsvParser {
         csvWriter.append(String.join(",",
             escapeCsv(debitingTime),
             escapeCsv(amountValue),
-            escapeCsv(spendingCategoryName),
+            escapeCsv(spendingCategoryName + " " + receiver + " " + receiverBank),
             escapeCsv(brandName),
             escapeCsv(type)
             ));
