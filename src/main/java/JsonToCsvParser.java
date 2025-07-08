@@ -24,7 +24,7 @@ public class JsonToCsvParser {
 
       // Create CSV file and write header
       FileWriter csvWriter = new FileWriter(csvFilePath);
-      csvWriter.append("date,value,brand,category,type\n");
+      csvWriter.append("operationDate,value,category,brand,type\n");
 
       // Process each transaction in the payload
       for (JsonNode transaction : payloadNode) {
@@ -42,8 +42,8 @@ public class JsonToCsvParser {
         csvWriter.append(String.join(",",
             escapeCsv(debitingTime),
             escapeCsv(amountValue),
-            escapeCsv(brandName),
             escapeCsv(spendingCategoryName),
+            escapeCsv(brandName),
             escapeCsv(type)
             ));
         csvWriter.append("\n");
