@@ -33,8 +33,9 @@ public class JsonToCsvParser {
         String brandName = getNestedValueAsString(transaction, "brand", "name");
         String amountValue = getNestedValueAsString(transaction, "amount", "value");
         String spendingCategoryName = getNestedValueAsString(transaction, "spendingCategory", "name");
-        String receiver = getNestedValueAsString(transaction,"fieldsValues", "maskedFIO");
-        String receiverBank = getNestedValueAsString(transaction,"fieldsValues", "receiverBankName");
+        String receiver = getSubNestedValueAsString(transaction,"payment", "fieldsValues", "maskedFIO");
+        String receiverBank = getSubNestedValueAsString(transaction,"payment", "fieldsValues", "receiverBankName");
+        String receiverPointer = getSubNestedValueAsString(transaction,"payment", "fieldsValues", "pointer");
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         long debitingTimeLong = getNestedValueAsLong(transaction, "operationTime", "milliseconds");
@@ -44,7 +45,7 @@ public class JsonToCsvParser {
         csvWriter.append(String.join(",",
             escapeCsv(debitingTime),
             escapeCsv(amountValue),
-            escapeCsv(spendingCategoryName + " " + receiver + " " + receiverBank),
+            escapeCsv(spendingCategoryName + " " + receiver + " " + receiverBank + " " + receiverPointer),
             escapeCsv(brandName),
             escapeCsv(type)
             ));
@@ -67,6 +68,17 @@ public class JsonToCsvParser {
     if (node.has(parentField)) {
       JsonNode parentNode = node.get(parentField);
       return parentNode.has(childField) ? parentNode.get(childField).asText() : "";
+    }
+    return "";
+  }
+
+  private static String getSubNestedValueAsString(JsonNode node,  String grandParentField, String parentField, String childField) {
+    if (node.has(grandParentField)) {
+      JsonNode grandParentNode = node.get(grandParentField);
+      if (grandParentNode.has(parentField)) {
+        JsonNode parentNode = grandParentNode.get(parentField);
+        return parentNode.has(childField) ? parentNode.get(childField).asText() : "";
+      }
     }
     return "";
   }
